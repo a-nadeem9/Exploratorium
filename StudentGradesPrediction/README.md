@@ -49,7 +49,13 @@ The code follows the following steps:
 6. Data visualization:
    - Scatter plots are created to visualize the relationship between independent variables and the final grade.
    - Each plot represents the relationship between a specific attribute and the final grade.
-   - The scatter plots are saved as a PDF file for further analysis.
+  
+     
+     ![Alt Text](scatter_plots.png)
+
+     
+## Conclusion
+The linearity assumption is not met by some variables so linear regression may not be the best model for this data.
 
 ## Instructions
 
