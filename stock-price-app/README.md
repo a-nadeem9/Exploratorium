@@ -1,0 +1,3 @@
+# Stock Price Analysis App
+
+The "Stock Price Analysis App" is a Python-based web application built using Streamlit, yfinance, cufflinks, pandas, and datetime. This app allows users to view and analyze historical stock price data of various companies listed in the S&P 500 index. The app provides interactive visualizations of stock price data, Bollinger Bands, and essential information about the selected company.
