@@ -11,3 +11,5 @@ The project consists of the following components:
 3. **Data Visualization:** Utilize ggplot and plotly libraries to create various types of static and interactive plots.
 
 4. **Dashboard Creation:** Develop a static dashboard using flexdashboard to present the visualized data and insights.
+
+![Dashboard](yt-trends-dashboard.png)
