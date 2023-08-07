@@ -1,0 +1,95 @@
+---
+title: "YouTube Trending"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(flexdashboard)
+library(dplyr)
+library(plotly)
+library(tidyr)
+
+video_stats <- read.delim("videos-stats.csv", sep=",", strip.white=T)
+video_stats <- video_stats %>%
+  drop_na()
+video_stats <- video_stats %>%
+  mutate(LikesPer1k = round(Likes/(Views/1000), 2),
+         CommentsPer1k = round(Comments/(Views/1000), 2),
+         TitleLen = nchar(Title))
+video_stats <- video_stats %>%
+  mutate(PubYear = as.factor(substr(Published.At,1,4)),
+         Published.At = as.POSIXct(Published.At, format="%Y-%m-%d"))
+```
+Column {data-width=560}
+-----------------------------------------------------------------------
+
+### Correlation b/w Likes and Comments for each Keyword
+
+```{r}
+video_stats %>%
+  # Specify variables we want to include
+  plot_ly(x=~LikesPer1k, y=~CommentsPer1k, color=~Keyword, type="scatter", mode="markers",
+          size=~Views, sizes=c(5,70),
+          # Add markers for each point and specify information to display on hover
+          marker=list(sizemode="diameter", opacity=0.5), hoverinfo="text",
+          			  # Customize hover text
+                      text=~paste(
+                        paste0("Likes per 1k views: ", LikesPer1k),
+                        paste0("Comments per 1k views: ", CommentsPer1k),
+                        paste0("Views (100k): ", round(Views/100000, 2)),
+                        paste0("Keyword (Category): ", Keyword),
+                      sep="<br>")) %>%
+  # Label the axes
+  layout(title = 'Likes VS Comments per 1k Views',
+         xaxis = list(title = 'Likes per 1k'),
+         yaxis = list(title = 'Comments per 1k'),
+         legend = list(title=list(text='<b> Keyword </b>')))
+
+```
+
+
+
+Column {data-width=440}
+-----------------------------------------------------------------------
+
+### Number of Videos Each Year
+
+```{r}
+
+video_stats %>%
+  ggplot(aes(x = PubYear)) +
+  geom_bar(fill = "#765add") + 
+  theme_minimal() +
+  labs(title = "Number of videos by year", x = "Publication Year", y = "Count")
+
+```
+
+
+### Trending Keywords
+
+```{r}
+
+plot1 <- video_stats %>%
+  # get the total comments per keyword per year; divide by 1000 to change scale
+  group_by(PubYear, Keyword) %>%
+  summarize(total_comments = sum(Comments)/1000) %>%
+  # create a ggplot colored by keywords
+  ggplot(aes(x=PubYear, y=total_comments, color=Keyword))+
+  # group = 1 specifies we want 1 line per keyword
+  geom_line(aes(group=1)) +
+  geom_point(size=0.5,alpha=0.5) +
+  ylab("Comment Count") +
+  xlab("Published Year") +
+  labs(title="Total Comments by Category Overtime (by 1k)")+
+  theme_minimal()
+
+# convert it into a plotly graph
+ggplotly(plot1)
+
+```
+
+
